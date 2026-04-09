@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Jobs — JobTracker{% endblock %}
+{% block page_title %}Jobs{% endblock %}
+{% block topbar_actions %}
+  <a href="{{ url_for('add_job') }}" class="btn btn-primary">+ Add Job</a>
+{% endblock %}
+
+{% block content %}
+<div class="table-card">
+  <div class="table-header">
+    <span class="table-title">All Jobs</span>
+    <span class="table-meta">{{ jobs|length }} records</span>
+  </div>
+  {% if jobs %}
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Company</th>
+        <th>Type</th>
+        <th>Salary</th>
+        <th>Skills</th>
+        <th>Posted</th>
+        <th>Apps</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for j in jobs %}
+      <tr>
+        <td>
+          <div class="td-primary">{{ j.job_title }}</div>
+          {% if j.job_url %}<a href="{{ j.job_url }}" target="_blank" class="url-link">↗ View posting</a>{% endif %}
+        </td>
+        <td>{{ j.company_name or '—' }}</td>
+        <td>
+          {% if j.job_type %}
+          {% set jt = j.job_type.replace('-','').lower() %}
+          <span class="badge badge-{{ jt }}">{{ j.job_type }}</span>
+          {% else %}—{% endif %}
+        </td>
+        <td>
+          {% if j.salary_min or j.salary_max %}
+          <span class="salary-range">
+            ${{ '{:,}'.format(j.salary_min) if j.salary_min else '?' }}
+            {% if j.salary_max %}– ${{ '{:,}'.format(j.salary_max) }}{% endif %}
+          </span>
+          {% else %}—{% endif %}
+        </td>
+        <td>
+          <div class="tag-list">
+            {% for skill in (j.requirements_list or [])[:4] %}
+            <span class="tag">{{ skill }}</span>
+            {% endfor %}
+            {% if (j.requirements_list or [])|length > 4 %}
+            <span class="tag">+{{ (j.requirements_list|length) - 4 }}</span>
+            {% endif %}
+          </div>
+        </td>
+        <td style="font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--text3);">
+          {{ j.date_posted.strftime('%b %d, %Y') if j.date_posted else '—' }}
+        </td>
+        <td><span class="badge badge-neutral">{{ j.application_count }}</span></td>
+        <td>
+          <div class="td-actions">
+            <a href="{{ url_for('edit_job', job_id=j.job_id) }}" class="btn btn-secondary btn-sm">Edit</a>
+            <button class="btn btn-danger btn-sm"
+              onclick="confirmDelete('{{ url_for('delete_job', job_id=j.job_id) }}', '{{ j.job_title }}')">
+              Delete
+            </button>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <div class="icon">💼</div>
+    <div class="title">No jobs tracked yet</div>
+    <div class="text">Start by adding job listings you're interested in.</div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

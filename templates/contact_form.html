@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}{{ action }} Contact — JobTracker{% endblock %}
+{% block page_title %}{{ action }} Contact{% endblock %}
+{% block topbar_actions %}
+  <a href="{{ url_for('contacts') }}" class="btn btn-secondary">← Back</a>
+{% endblock %}
+
+{% block content %}
+<div class="form-card">
+  <div class="form-card-header">
+    <div class="table-title">{{ action }} Contact</div>
+  </div>
+  <form method="POST">
+    <div class="form-card-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" name="contact_name" required
+            value="{{ contact.contact_name if contact else '' }}" placeholder="Sarah Johnson" />
+        </div>
+        <div class="form-group">
+          <label>Title / Role</label>
+          <input type="text" name="title"
+            value="{{ contact.title if contact else '' }}" placeholder="Engineering Manager" />
+        </div>
+        <div class="form-group form-col-span">
+          <label>Company</label>
+          <select name="company_id">
+            <option value="">— Select Company —</option>
+            {% for c in companies %}
+            <option value="{{ c.company_id }}"
+              {% if contact and contact.company_id == c.company_id %}selected{% endif %}>
+              {{ c.company_name }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" name="email"
+            value="{{ contact.email if contact else '' }}" placeholder="sarah@company.com" />
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" name="phone"
+            value="{{ contact.phone if contact else '' }}" placeholder="415-555-0100" />
+        </div>
+        <div class="form-group form-col-span">
+          <label>LinkedIn URL</label>
+          <input type="url" name="linkedin_url"
+            value="{{ contact.linkedin_url if contact else '' }}" placeholder="https://linkedin.com/in/..." />
+        </div>
+        <div class="form-group form-col-span">
+          <label>Notes</label>
+          <textarea name="notes" placeholder="How you met, context, follow-up actions...">{{ contact.notes if contact else '' }}</textarea>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">{{ action }} Contact</button>
+      <a href="{{ url_for('contacts') }}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
