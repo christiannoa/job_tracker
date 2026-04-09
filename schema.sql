@@ -39,7 +39,9 @@ CREATE TABLE IF NOT EXISTS applications (
     FOREIGN KEY (job_id) REFERENCES jobs(job_id) ON DELETE SET NULL
 );
 
-CREATE TABLE IF NOT EXISTS contacts (
+DROP TABLE IF EXISTS contacts;
+
+CREATE TABLE contacts (
     contact_id INT PRIMARY KEY AUTO_INCREMENT,
     company_id INT,
     contact_name VARCHAR(100) NOT NULL,
