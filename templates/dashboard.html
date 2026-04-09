@@ -1,5 +1,18 @@
-{% extends "main.html" %} {% block title %}Dashboard — JobTracker{% endblock %}
-{% block page_title %}Dashboard{% endblock %} {% block content %}
+{% extends "main.html" %}
+{% block title %}Dashboard — JobTracker{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- Motivational Banner -->
+<div class="quote-banner">
+  <div class="quote-icon">"</div>
+  <div class="quote-content">
+    <div class="quote-text">{{ quote.text }}</div>
+    <div class="quote-author">— {{ quote.author }}</div>
+  </div>
+</div>
+
 <!-- Stat Grid -->
 <div class="stat-grid">
   <div class="stat-card">
@@ -34,29 +47,27 @@
   </div>
 </div>
 
+<!-- Pipeline + Recent -->
 <div class="dashboard-grid">
-  <!-- Status Breakdown -->
   <div class="table-card">
     <div class="table-header">
       <span class="table-title">Application Pipeline</span>
     </div>
     <div class="status-bar-container">
-      {% set total = stats.total_applications if stats.total_applications > 0
-      else 1 %} {% set statuses = [ ('Applied', status_map.get('Applied',0),
-      '#8b91ad', 'badge-applied'), ('Screening', status_map.get('Screening',0),
-      '#f5c842', 'badge-screening'), ('Interview',
-      status_map.get('Interview',0), '#6c8fff', 'badge-interview'), ('Offer',
-      status_map.get('Offer',0), '#3dd68c', 'badge-offer'), ('Rejected',
-      status_map.get('Rejected',0), '#ff5f6d', 'badge-rejected'), ('Withdrawn',
-      status_map.get('Withdrawn',0), '#555d7a', 'badge-withdrawn'), ] %} {% for
-      label, count, color, cls in statuses %}
+      {% set total = stats.total_applications if stats.total_applications > 0 else 1 %}
+      {% set statuses = [
+        ('Applied',   status_map.get('Applied',0),   '#8b91ad'),
+        ('Screening', status_map.get('Screening',0), '#f5c842'),
+        ('Interview', status_map.get('Interview',0), '#6c8fff'),
+        ('Offer',     status_map.get('Offer',0),     '#3dd68c'),
+        ('Rejected',  status_map.get('Rejected',0),  '#ff5f6d'),
+        ('Withdrawn', status_map.get('Withdrawn',0), '#555d7a'),
+      ] %}
+      {% for label, count, color in statuses %}
       <div class="status-row">
         <span class="status-row-label">{{ label }}</span>
         <div class="status-bar-track">
-          <div
-            class="status-bar-fill"
-            style="width: {{ (count / total * 100)|round|int }}%; background: {{ color }};"
-          ></div>
+          <div class="status-bar-fill" style="width: {{ (count / total * 100)|round|int }}%; background: {{ color }};"></div>
         </div>
         <span class="status-row-count">{{ count }}</span>
       </div>
@@ -64,13 +75,10 @@
     </div>
   </div>
 
-  <!-- Recent Applications -->
   <div class="table-card">
     <div class="table-header">
       <span class="table-title">Recent Activity</span>
-      <a href="{{ url_for('applications') }}" class="btn btn-secondary btn-sm"
-        >View All</a
-      >
+      <a href="{{ url_for('applications') }}" class="btn btn-secondary btn-sm">View All</a>
     </div>
     {% if stats.recent_applications %}
     <table>
@@ -78,28 +86,14 @@
         {% for app in stats.recent_applications %}
         <tr>
           <td>
-            <div
-              style="font-weight: 600; color: var(--text); font-size: 0.85rem"
-            >
-              {{ app.job_title or '—' }}
-            </div>
-            <div style="font-size: 0.75rem; color: var(--text3)">
-              {{ app.company_name or '—' }}
-            </div>
+            <div style="font-weight:600;color:var(--text);font-size:0.85rem;">{{ app.job_title or '—' }}</div>
+            <div style="font-size:0.75rem;color:var(--text3);">{{ app.company_name or '—' }}</div>
           </td>
           <td>
-            {% set s = app.status %}
-            <span class="badge badge-{{ s.lower() }}">{{ s }}</span>
+            <span class="badge badge-{{ app.status.lower() }}">{{ app.status }}</span>
           </td>
-          <td
-            style="
-              font-size: 0.75rem;
-              color: var(--text3);
-              font-family: &quot;DM Mono&quot;, monospace;
-            "
-          >
-            {{ app.application_date.strftime('%b %d') if app.application_date
-            else '—' }}
+          <td style="font-size:0.75rem;color:var(--text3);font-family:'DM Mono',monospace;">
+            {{ app.application_date.strftime('%b %d') if app.application_date else '—' }}
           </td>
         </tr>
         {% endfor %}
@@ -109,27 +103,62 @@
     <div class="empty-state">
       <div class="icon">📋</div>
       <div class="title">No applications yet</div>
-      <div class="text">
-        <a href="{{ url_for('add_application') }}" class="url-link"
-          >Add your first application →</a
-        >
-      </div>
+      <div class="text"><a href="{{ url_for('add_application') }}" class="url-link">Add your first →</a></div>
     </div>
     {% endif %}
   </div>
 </div>
 
-<!-- Quick Links -->
-<div style="margin-top: 24px; display: flex; gap: 10px; flex-wrap: wrap">
-  <a href="{{ url_for('add_company') }}" class="btn btn-secondary"
-    >+ Add Company</a
-  >
-  <a href="{{ url_for('add_job') }}" class="btn btn-secondary">+ Add Job</a>
-  <a href="{{ url_for('add_application') }}" class="btn btn-primary"
-    >+ Log Application</a
-  >
-  <a href="{{ url_for('job_match') }}" class="btn btn-secondary"
-    >✦ Match Skills</a
-  >
+<!-- Win Wall -->
+<div class="win-wall-section">
+  <div class="section-header" style="margin-bottom:16px;">
+    <div class="section-title" style="font-size:1rem;">
+      🏆 Win Wall
+      <span style="font-size:0.72rem;color:var(--text3);font-weight:400;margin-left:8px;">Interviews & Offers — your proof of progress</span>
+    </div>
+  </div>
+
+  {% if win_wall %}
+  <div class="win-wall-grid">
+    {% for w in win_wall %}
+    <div class="win-card {% if w.status == 'Offer' %}win-card-offer{% else %}win-card-interview{% endif %}">
+      <div class="win-card-top">
+        <div class="win-badge">
+          {% if w.status == 'Offer' %}🎉 Offer{% else %}🎯 Interview{% endif %}
+        </div>
+        <div class="win-date">
+          {{ w.application_date.strftime('%b %d, %Y') if w.application_date else '' }}
+        </div>
+      </div>
+      <div class="win-title">{{ w.job_title or '—' }}</div>
+      <div class="win-company">{{ w.company_name or '—' }}</div>
+      {% if w.city or w.state %}
+      <div class="win-location">📍 {{ [w.city, w.state]|select|join(', ') }}</div>
+      {% endif %}
+      {% if w.salary_min or w.salary_max %}
+      <div class="win-salary">
+        💰 ${{ '{:,}'.format(w.salary_min) if w.salary_min else '?' }}
+        {% if w.salary_max %}– ${{ '{:,}'.format(w.salary_max) }}{% endif %}
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="win-wall-empty">
+    <div style="font-size:2rem;margin-bottom:10px;">🏆</div>
+    <div style="font-size:0.95rem;font-weight:600;color:var(--text2);margin-bottom:6px;">Your wins will show up here</div>
+    <div style="font-size:0.82rem;color:var(--text3);">Keep applying. Every interview and offer lands on this wall.</div>
+  </div>
+  {% endif %}
 </div>
+
+<!-- Quick Links -->
+<div style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap;">
+  <a href="{{ url_for('add_company') }}" class="btn btn-secondary">+ Add Company</a>
+  <a href="{{ url_for('add_job') }}" class="btn btn-secondary">+ Add Job</a>
+  <a href="{{ url_for('add_application') }}" class="btn btn-primary">+ Log Application</a>
+  <a href="{{ url_for('job_match') }}" class="btn btn-secondary">✦ Match Skills</a>
+</div>
+
 {% endblock %}

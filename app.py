@@ -22,13 +22,41 @@ def parse_requirements(req_json):
     except:
         return []
 
+# ── Quotes ───────────────────────────────────────────────────────────────────
+
+QUOTES = [
+    {"text": "I've missed more than 9,000 shots in my career. I've lost almost 300 games. I've failed over and over again in my life. And that is why I succeed.", "author": "Michael Jordan"},
+    {"text": "Everything negative — pressure, challenges — is all an opportunity for me to rise.", "author": "Kobe Bryant"},
+    {"text": "Hard work, dedication.", "author": "Floyd Mayweather"},
+    {"text": "Work like there is someone working 24 hours a day to take it all away from you.", "author": "Mark Cuban"},
+    {"text": "I'm convinced that about half of what separates successful entrepreneurs from the non-successful ones is pure perseverance.", "author": "Steve Jobs"},
+    {"text": "The most important thing is to try and inspire people so that they can be great in whatever they want to do.", "author": "Kobe Bryant"},
+    {"text": "Limits, like fears, are often just an illusion.", "author": "Michael Jordan"},
+    {"text": "It's hard to beat a person who never gives up.", "author": "Babe Ruth"},
+    {"text": "Don't be afraid to give up the good to go for the great.", "author": "John D. Rockefeller"},
+    {"text": "Success is not final, failure is not fatal: it is the courage to continue that counts.", "author": "Winston Churchill"},
+    {"text": "The only way to do great work is to love what you do.", "author": "Steve Jobs"},
+    {"text": "I hated every minute of training, but I said don't quit. Suffer now and live the rest of your life as a champion.", "author": "Muhammad Ali"},
+    {"text": "You miss 100% of the shots you don't take.", "author": "Wayne Gretzky"},
+    {"text": "Sweat equity is the most valuable equity there is.", "author": "Mark Cuban"},
+    {"text": "If you're going through hell, keep going.", "author": "Winston Churchill"},
+    {"text": "The secret of getting ahead is getting started.", "author": "Mark Twain"},
+    {"text": "I am not a product of my circumstances. I am a product of my decisions.", "author": "Stephen Covey"},
+    {"text": "The mamba mentality is about focusing on the process and trusting it.", "author": "Kobe Bryant"},
+    {"text": "Once you become fearless, life becomes limitless.", "author": "Unknown"},
+    {"text": "Start where you are. Use what you have. Do what you can.", "author": "Arthur Ashe"},
+]
+
 # ── Dashboard ─────────────────────────────────────────────────────────────────
 
 @app.route('/')
 def dashboard():
+    import random
     stats = db.get_dashboard_stats()
     status_map = {s['status']: s['count'] for s in stats['status_counts']}
-    return render_template('dashboard.html', stats=stats, status_map=status_map)
+    quote = random.choice(QUOTES)
+    win_wall = db.get_win_wall()
+    return render_template('dashboard.html', stats=stats, status_map=status_map, quote=quote, win_wall=win_wall)
 
 # ── Companies ─────────────────────────────────────────────────────────────────
 

@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def get_connection():
+    """Create and return a database connection."""
     try:
         connection = mysql.connector.connect(
             host=os.getenv('DB_HOST', 'localhost'),
@@ -244,4 +245,16 @@ def get_jobs_with_requirements():
         SELECT j.*, c.company_name FROM jobs j
         LEFT JOIN companies c ON j.company_id = c.company_id
         WHERE j.requirements IS NOT NULL AND j.requirements != 'null'
+    """, fetch=True)
+
+# --- Win Wall ---
+def get_win_wall():
+    return execute_query("""
+        SELECT a.*, j.job_title, j.salary_min, j.salary_max, j.job_type,
+               c.company_name, c.industry, c.city, c.state
+        FROM applications a
+        LEFT JOIN jobs j ON a.job_id = j.job_id
+        LEFT JOIN companies c ON j.company_id = c.company_id
+        WHERE a.status IN ('Interview', 'Offer')
+        ORDER BY FIELD(a.status, 'Offer', 'Interview'), a.application_date DESC
     """, fetch=True)
