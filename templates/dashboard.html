@@ -1,8 +1,5 @@
-{% extends "base.html" %}
-{% block title %}Dashboard — JobTracker{% endblock %}
-{% block page_title %}Dashboard{% endblock %}
-
-{% block content %}
+{% extends "main.html" %} {% block title %}Dashboard — JobTracker{% endblock %}
+{% block page_title %}Dashboard{% endblock %} {% block content %}
 <!-- Stat Grid -->
 <div class="stat-grid">
   <div class="stat-card">
@@ -44,20 +41,22 @@
       <span class="table-title">Application Pipeline</span>
     </div>
     <div class="status-bar-container">
-      {% set total = stats.total_applications if stats.total_applications > 0 else 1 %}
-      {% set statuses = [
-        ('Applied',   status_map.get('Applied',0),   '#8b91ad', 'badge-applied'),
-        ('Screening', status_map.get('Screening',0), '#f5c842', 'badge-screening'),
-        ('Interview', status_map.get('Interview',0), '#6c8fff', 'badge-interview'),
-        ('Offer',     status_map.get('Offer',0),     '#3dd68c', 'badge-offer'),
-        ('Rejected',  status_map.get('Rejected',0),  '#ff5f6d', 'badge-rejected'),
-        ('Withdrawn', status_map.get('Withdrawn',0), '#555d7a', 'badge-withdrawn'),
-      ] %}
-      {% for label, count, color, cls in statuses %}
+      {% set total = stats.total_applications if stats.total_applications > 0
+      else 1 %} {% set statuses = [ ('Applied', status_map.get('Applied',0),
+      '#8b91ad', 'badge-applied'), ('Screening', status_map.get('Screening',0),
+      '#f5c842', 'badge-screening'), ('Interview',
+      status_map.get('Interview',0), '#6c8fff', 'badge-interview'), ('Offer',
+      status_map.get('Offer',0), '#3dd68c', 'badge-offer'), ('Rejected',
+      status_map.get('Rejected',0), '#ff5f6d', 'badge-rejected'), ('Withdrawn',
+      status_map.get('Withdrawn',0), '#555d7a', 'badge-withdrawn'), ] %} {% for
+      label, count, color, cls in statuses %}
       <div class="status-row">
         <span class="status-row-label">{{ label }}</span>
         <div class="status-bar-track">
-          <div class="status-bar-fill" style="width: {{ (count / total * 100)|round|int }}%; background: {{ color }};"></div>
+          <div
+            class="status-bar-fill"
+            style="width: {{ (count / total * 100)|round|int }}%; background: {{ color }};"
+          ></div>
         </div>
         <span class="status-row-count">{{ count }}</span>
       </div>
@@ -69,7 +68,9 @@
   <div class="table-card">
     <div class="table-header">
       <span class="table-title">Recent Activity</span>
-      <a href="{{ url_for('applications') }}" class="btn btn-secondary btn-sm">View All</a>
+      <a href="{{ url_for('applications') }}" class="btn btn-secondary btn-sm"
+        >View All</a
+      >
     </div>
     {% if stats.recent_applications %}
     <table>
@@ -77,15 +78,28 @@
         {% for app in stats.recent_applications %}
         <tr>
           <td>
-            <div style="font-weight:600;color:var(--text);font-size:0.85rem;">{{ app.job_title or '—' }}</div>
-            <div style="font-size:0.75rem;color:var(--text3);">{{ app.company_name or '—' }}</div>
+            <div
+              style="font-weight: 600; color: var(--text); font-size: 0.85rem"
+            >
+              {{ app.job_title or '—' }}
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text3)">
+              {{ app.company_name or '—' }}
+            </div>
           </td>
           <td>
             {% set s = app.status %}
             <span class="badge badge-{{ s.lower() }}">{{ s }}</span>
           </td>
-          <td style="font-size:0.75rem;color:var(--text3);font-family:'DM Mono',monospace;">
-            {{ app.application_date.strftime('%b %d') if app.application_date else '—' }}
+          <td
+            style="
+              font-size: 0.75rem;
+              color: var(--text3);
+              font-family: &quot;DM Mono&quot;, monospace;
+            "
+          >
+            {{ app.application_date.strftime('%b %d') if app.application_date
+            else '—' }}
           </td>
         </tr>
         {% endfor %}
@@ -95,17 +109,27 @@
     <div class="empty-state">
       <div class="icon">📋</div>
       <div class="title">No applications yet</div>
-      <div class="text"><a href="{{ url_for('add_application') }}" class="url-link">Add your first application →</a></div>
+      <div class="text">
+        <a href="{{ url_for('add_application') }}" class="url-link"
+          >Add your first application →</a
+        >
+      </div>
     </div>
     {% endif %}
   </div>
 </div>
 
 <!-- Quick Links -->
-<div style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap;">
-  <a href="{{ url_for('add_company') }}" class="btn btn-secondary">+ Add Company</a>
+<div style="margin-top: 24px; display: flex; gap: 10px; flex-wrap: wrap">
+  <a href="{{ url_for('add_company') }}" class="btn btn-secondary"
+    >+ Add Company</a
+  >
   <a href="{{ url_for('add_job') }}" class="btn btn-secondary">+ Add Job</a>
-  <a href="{{ url_for('add_application') }}" class="btn btn-primary">+ Log Application</a>
-  <a href="{{ url_for('job_match') }}" class="btn btn-secondary">✦ Match Skills</a>
+  <a href="{{ url_for('add_application') }}" class="btn btn-primary"
+    >+ Log Application</a
+  >
+  <a href="{{ url_for('job_match') }}" class="btn btn-secondary"
+    >✦ Match Skills</a
+  >
 </div>
 {% endblock %}

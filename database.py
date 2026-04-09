@@ -6,14 +6,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def get_connection():
-    """Create and return a database connection."""
     try:
         connection = mysql.connector.connect(
             host=os.getenv('DB_HOST', 'localhost'),
             database=os.getenv('DB_NAME', 'job_tracker'),
             user=os.getenv('DB_USER', 'root'),
             password=os.getenv('DB_PASSWORD', ''),
-            port=int(os.getenv('DB_PORT', 3306))
+            port=int(os.getenv('DB_PORT', 3306)),
+            unix_socket='/tmp/mysql.sock'
         )
         return connection
     except Error as e:
